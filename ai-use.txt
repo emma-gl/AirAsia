@@ -1,0 +1,18 @@
+1. AI tool(s) used
+------------------
+Claude Code
+
+2. Prompt(s) used
+-----------------
+- "Based on this wireframe, could you create the necessary files with the form action flows between pages?"
+- "Can you create an image for the gift card image?"
+- "Can you create a css file and apply it to all the pages?"
+
+3. How AI supported my work
+---------------------------
+AI supported my work initially by setting up the code outline (file structure and linked pages together) based 
+on the wireframes I provided it. Once I set up all the html, I had it generate the giftcard image and the css style file to be used across the site.
+
+4. Example of an AI suggestion I tested, changed, or rejected
+-------------------------------------------------------------
+Because my wireframe has a "Delete Card" and an "Add Customer" button, it created files/forms for those which I subsequently deleted because its not in the scope of this assignment.
