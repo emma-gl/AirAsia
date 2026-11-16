@@ -1,18 +1,49 @@
 1. AI tool(s) used
 ------------------
-Claude Code
+Claude Code (Anthropic) in VS Code
 
 2. Prompt(s) used
 -----------------
+HW2:
 - "Based on this wireframe, could you create the necessary files with the form action flows between pages?"
 - "Can you create an image for the gift card image?"
 - "Can you create a css file and apply it to all the pages?"
 
+HW3:
+- "Based on schema.sql, insert at least five ACCOUNT records and 20 GIFTCARD records in seed.sql"
+- "Can you create a validation test harness in 'validation-tests.php' including the following tests?: 
+Test	Expected result
+Valid Gift Card data	Passes validation
+Blank Card Name	Fails validation
+Altered or invalid Card Type	Fails validation
+Zero or negative Card Value	Fails validation
+Invalid Points Required	Fails validation
+"
+
 3. How AI supported my work
 ---------------------------
-AI supported my work initially by setting up the code outline (file structure and linked pages together) based 
-on the wireframes I provided it. Once I set up all the html, I had it generate the giftcard image and the css style file to be used across the site.
+HW2: AI set up the code outline (file structure and links between pages) from my wireframes. Once the
+HTML was in place, I had it generate the gift card image and the CSS file used across the site.
+
+HW3: AI did the following:
+- Wrote seed.sql using the ACCOUNT and GIFTCARD attributes from the requirements document.
+- Wrote the validation test harness.
 
 4. Example of an AI suggestion I tested, changed, or rejected
 -------------------------------------------------------------
-Because my wireframe has a "Delete Card" and an "Add Customer" button, it created files/forms for those which I subsequently deleted because its not in the scope of this assignment.
+HW2: My wireframe had "Delete Card" and "Add Customer" buttons, so the AI created files and forms for
+them. I deleted those because they were not in the scope of that assignment.
+
+HW3: The AI added a lot more use cases to the validation test harness then necessary which I consolidated.
+
+5. How I verified the final code and database behavior
+------------------------------------------------------
+- Ran "php database/init-db.php" and confirmed it reported 5 ACCOUNT rows and 20 GIFTCARD rows.
+- Opened tests/validation-tests.php and confirmed all 25 tests showed PASS.
+- Walked through the full workflow (list -> details -> add -> update -> delete) and checked that the
+  list and details pages reflected each change.
+- Tried invalid values and IDs such as blank names, an altered Card Type, negative values,
+  card_id=abc, and card_id=999, and confirmed that error messages or a "not found" page appeared
+  instead of PHP errors.
+- Added a card with HTML in its name to confirm the output is escaped.
+- The results are recorded in test-report.md.

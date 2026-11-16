@@ -1,45 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add Gift Card | AirAsia Rewards</title>
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-  <header class="site-header">
-    <a href="card-list.php" class="logo">AirAsia <span>Rewards</span></a>
-  </header>
+<?php
+/* Use case: Add data for a new gift card */
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/validation.php';
 
-  <main class="panel">
+$values = ['card_name' => '', 'card_type' => '', 'card_value' => '', 'points_required' => ''];
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    [$values, $errors] = validate_gift_card($_POST);
+
+    if (!$errors) {
+        $stmt = $pdo->prepare(
+            'INSERT INTO GIFTCARD (cardName, cardType, cardValue, points)
+             VALUES (:cardName, :cardType, :cardValue, :points)'
+        );
+        $stmt->execute([
+            ':cardName'  => $values['card_name'],
+            ':cardType'  => $values['card_type'],
+            ':cardValue' => (float) $values['card_value'],
+            ':points'    => (int) $values['points_required'],
+        ]);
+
+        header('Location: card-list.php?status=added');
+        exit;
+    }
+}
+
+$pageTitle   = 'Add Gift Card';
+$formAction  = 'card-add.php';
+$submitLabel = 'Add Gift Card';
+$cancelUrl   = 'card-list.php';
+
+require_once __DIR__ . '/includes/header.php';
+require_once __DIR__ . '/includes/nav.php';
+?>
     <h1>Add Gift Card</h1>
-
-    <form action="card-list.php" method="post" class="stacked-form">
-      <div class="form-group">
-        <label for="card-name">Card Name:</label>
-        <input type="text" id="card-name" name="card_name" placeholder="e.g. Starbucks e-Gift Card" required>
-      </div>
-
-      <div class="form-group">
-        <label for="card-type">Card Type:</label>
-        <input type="text" id="card-type" name="card_type" placeholder="e.g. Food &amp; Beverage" required>
-      </div>
-
-      <div class="form-group">
-        <label for="card-value">Card Value:</label>
-        <input type="number" id="card-value" name="card_value" min="0.01" step="0.01" placeholder="e.g. 25.00" required>
-      </div>
-
-      <div class="form-group">
-        <label for="points-required">Points Required:</label>
-        <input type="number" id="points-required" name="points_required" min="1" step="1" placeholder="e.g. 5000" required>
-      </div>
-
-      <div class="button-row">
-        <button type="submit" class="btn">Add Gift Card</button>
-        <a href="card-list.php" class="btn btn-secondary">Cancel</a>
-      </div>
-    </form>
-  </main>
-</body>
-</html>
+    <?php require __DIR__ . '/includes/card-form.php'; ?>
+<?php require_once __DIR__ . '/includes/footer.php'; ?>

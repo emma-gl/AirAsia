@@ -1,44 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gift Card Details | AirAsia Rewards</title>
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-  <header class="site-header">
-    <a href="card-list.php" class="logo">AirAsia <span>Rewards</span></a>
-  </header>
+<?php
+/* Use case: View details of one gift card */
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/validation.php';
+require_once __DIR__ . '/includes/load-card.php';  // validates card_id and sets $card
 
-  <main class="panel">
-    <a href="card-list.php" class="back-link">&larr; Back to Gift Cards</a>
+$justUpdated = ($_GET['status'] ?? '') === 'updated';
+$cardIdParam = urlencode((string) $card['cardId']);
+
+$pageTitle = $card['cardName'];
+require_once __DIR__ . '/includes/header.php';
+require_once __DIR__ . '/includes/nav.php';
+?>
+    <a href="card-list.php" class="back-link">&larr; Return to Gift Card List</a>
+
+    <?php if ($justUpdated): ?>
+      <p class="alert alert-success" role="status">The Gift Card was updated. The saved information is shown below.</p>
+    <?php endif; ?>
+
     <article>
-      <h1 class="centered">Starbucks e-Gift Card</h1>
+      <h1 class="centered"><?= htmlspecialchars($card['cardName']) ?></h1>
 
       <div class="details">
-        <img src="images/gift-card.svg" alt="Starbucks e-Gift Card">
+        <img src="images/gift-card.svg" alt="<?= htmlspecialchars($card['cardName']) ?> gift card">
 
         <dl>
           <div>
-            <dt>Type:</dt>
-            <dd>Food &amp; Beverage</dd>
+            <dt>Card ID:</dt>
+            <dd><?= htmlspecialchars((string) $card['cardId']) ?></dd>
           </div>
           <div>
-            <dt>Value:</dt>
-            <dd>50.00</dd>
+            <dt>Card Name:</dt>
+            <dd><?= htmlspecialchars($card['cardName']) ?></dd>
+          </div>
+          <div>
+            <dt>Card Type:</dt>
+            <dd><?= htmlspecialchars($card['cardType']) ?></dd>
+          </div>
+          <div>
+            <dt>Card Value:</dt>
+            <dd>$<?= htmlspecialchars(number_format((float) $card['cardValue'], 2)) ?></dd>
           </div>
           <div>
             <dt>Points Required:</dt>
-            <dd>5,000</dd>
+            <dd><?= htmlspecialchars(number_format((int) $card['points'])) ?></dd>
           </div>
         </dl>
       </div>
 
       <div class="button-row">
-        <a href="card-update.php" class="btn">Update Gift Card</a>
+        <a href="card-update.php?card_id=<?= $cardIdParam ?>" class="btn">Update Gift Card</a>
+        <a href="card-delete.php?card_id=<?= $cardIdParam ?>" class="btn btn-danger">Delete Gift Card</a>
+        <a href="card-list.php" class="btn btn-secondary">Return to Gift Card List</a>
       </div>
     </article>
-  </main>
-</body>
-</html>
+<?php require_once __DIR__ . '/includes/footer.php'; ?>

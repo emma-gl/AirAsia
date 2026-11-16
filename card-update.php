@@ -1,45 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Update Gift Card | AirAsia Rewards</title>
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-  <header class="site-header">
-    <a href="card-list.php" class="logo">AirAsia <span>Rewards</span></a>
-  </header>
+<?php
+/* Use case: Update data for one gift card */
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/validation.php';
+require_once __DIR__ . '/includes/load-card.php';  // validates card_id and sets $card, $cardId
 
-  <main class="panel">
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    [$values, $errors] = validate_gift_card($_POST);
+
+    if (!$errors) {
+        $stmt = $pdo->prepare(
+            'UPDATE GIFTCARD
+                SET cardName = :cardName, cardType = :cardType, cardValue = :cardValue, points = :points
+              WHERE cardId = :cardId'
+        );
+        $stmt->execute([
+            ':cardName'  => $values['card_name'],
+            ':cardType'  => $values['card_type'],
+            ':cardValue' => (float) $values['card_value'],
+            ':points'    => (int) $values['points_required'],
+            ':cardId'    => $cardId,
+        ]);
+
+        header('Location: card-details.php?card_id=' . urlencode((string) $cardId) . '&status=updated');
+        exit;
+    }
+} else {
+    // Prepopulate the form with the saved values.
+    $values = [
+        'card_name'       => $card['cardName'],
+        'card_type'       => $card['cardType'],
+        'card_value'      => number_format((float) $card['cardValue'], 2, '.', ''),
+        'points_required' => (string) $card['points'],
+    ];
+}
+
+$pageTitle   = 'Update Gift Card';
+$formAction  = 'card-update.php?card_id=' . urlencode((string) $cardId);
+$submitLabel = 'Save Changes';
+$cancelUrl   = 'card-details.php?card_id=' . urlencode((string) $cardId);
+
+require_once __DIR__ . '/includes/header.php';
+require_once __DIR__ . '/includes/nav.php';
+?>
+    <a href="<?= htmlspecialchars($cancelUrl) ?>" class="back-link">&larr; Back to Gift Card Details</a>
     <h1>Update Gift Card</h1>
-
-    <form action="card-list.php" method="post" class="stacked-form">
-      <div class="form-group">
-        <label for="card-name">Card Name:</label>
-        <input type="text" id="card-name" name="card_name" value="Starbucks e-Gift Card" required>
-      </div>
-
-      <div class="form-group">
-        <label for="card-type">Card Type:</label>
-        <input type="text" id="card-type" name="card_type" value="Food &amp; Beverage" required>
-      </div>
-
-      <div class="form-group">
-        <label for="card-value">Card Value:</label>
-        <input type="number" id="card-value" name="card_value" min="0.01" step="0.01" value="50.00" required>
-      </div>
-
-      <div class="form-group">
-        <label for="points-required">Points Required:</label>
-        <input type="number" id="points-required" name="points_required" min="1" step="1" value="5000" required>
-      </div>
-
-      <div class="button-row">
-        <button type="submit" class="btn">Save Changes</button>
-        <a href="card-details.php" class="btn btn-secondary">Cancel</a>
-      </div>
-    </form>
-  </main>
-</body>
-</html>
+    <p class="sub-heading">Editing Card ID <?= htmlspecialchars((string) $cardId) ?>: <?= htmlspecialchars($card['cardName']) ?></p>
+    <?php require __DIR__ . '/includes/card-form.php'; ?>
+<?php require_once __DIR__ . '/includes/footer.php'; ?>
