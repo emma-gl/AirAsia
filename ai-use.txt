@@ -19,6 +19,7 @@ Altered or invalid Card Type	Fails validation
 Zero or negative Card Value	Fails validation
 Invalid Points Required	Fails validation
 "
+- "Can you establish a PDO connection to the SQLite database?"
 
 3. How AI supported my work
 ---------------------------
